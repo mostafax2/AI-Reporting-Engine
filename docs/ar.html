@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محرك التقارير بالذكاء الاصطناعي — التوثيق</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Outfit:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap');
+:root {
+  --bg:#F0F4F8;--bg2:#E8EFF6;--white:#fff;
+  --cyan:#0077A8;--cyan-dim:#005580;--cyan-pale:rgba(0,119,168,.08);
+  --amber:#C46A00;--purple:#7C3AED;--green:#059669;--red:#DC2626;
+  --text:#1A2535;--muted:#5A7089;--border:rgba(0,100,160,.12);
+  --shadow:0 2px 12px rgba(0,80,140,.06);
+  --shadow-lg:0 8px 32px rgba(0,80,140,.12);
+  --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Cairo','Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.7}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(0,100,160,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+section,header,footer{position:relative;z-index:1}
+a{color:var(--cyan);text-decoration:none}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--cyan-pale);border:1px solid rgba(0,119,168,.15);border-radius:5px;padding:.1em .4em}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(240,244,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 2rem;display:flex;align-items:center;gap:1.5rem;font-size:.8rem;font-weight:600}
+nav a{color:var(--muted);transition:color .2s}nav a:hover{color:var(--cyan)}
+.nav-logo{font-weight:900;color:var(--text);font-size:.9rem;margin-left:auto}
+.nav-badge{background:var(--cyan);color:#fff;padding:.15rem .6rem;border-radius:100px;font-size:.7rem}
+.lang-btn{margin-left:auto;background:var(--cyan-pale);border:1px solid var(--border);border-radius:8px;padding:.3rem .8rem;color:var(--cyan);cursor:pointer;font-size:.78rem;font-weight:700}
+
+/* ── Hero ── */
+header{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;overflow:hidden;isolation:isolate}
+header>*:not(.hero-bg):not(canvas){position:relative;z-index:2}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(0,130,200,.08),transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;background:var(--cyan-pale);border:1px solid rgba(0,119,168,.25);border-radius:100px;padding:.35rem 1.1rem;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:2rem}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+h1{font-size:clamp(2.4rem,6vw,4.8rem);font-weight:900;line-height:1.12;margin-bottom:1.5rem}
+.g{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.1rem;color:var(--muted);max-width:580px;margin:0 auto 2.5rem;font-weight:300}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:3rem}
+.chip{background:var(--white);border:1px solid var(--border);border-radius:100px;padding:.3rem .85rem;font-size:.75rem;font-weight:600;color:var(--muted);box-shadow:var(--shadow)}
+.hero-cta{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--cyan);color:#fff;padding:.75rem 1.75rem;border-radius:10px;font-weight:700;font-size:.9rem;transition:all .2s;display:inline-block}
+.btn-primary:hover{background:var(--cyan-dim);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,119,168,.3)}
+.btn-secondary{background:var(--white);color:var(--text);padding:.75rem 1.75rem;border-radius:10px;font-weight:600;font-size:.9rem;border:1px solid var(--border);transition:all .2s;display:inline-block}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* ── Shared ── */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+.section-label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--cyan-dim),transparent)}
+h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.25;margin-bottom:.75rem}
+h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
+p{color:var(--muted);margin-bottom:.8rem}
+section{padding:6rem 0}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:1.8rem;transition:all .3s}
+.card:hover{border-color:var(--cyan-dim);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── Grid ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+@media(max-width:900px){.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* ── Code ── */
+.code-block{background:#1C2333;border:1px solid rgba(0,100,160,.2);border-radius:var(--r);padding:1.4rem 1.6rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:#CBD5E1;overflow-x:auto;white-space:pre;direction:ltr;text-align:left}
+.code-tabs{display:flex;gap:.4rem;background:#F8FAFC;border:1px solid var(--border);border-bottom:none;border-radius:var(--r) var(--r) 0 0;padding:.4rem .4rem 0;flex-wrap:wrap}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;padding:.6rem 1.1rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan);font-weight:600}
+.code-panel{display:none}.code-panel.active{display:block}
+.code-panel .code-block{border-radius:0 0 var(--r) var(--r);border-top:none}
+.kw{color:#FF79C6}.cls{color:#8BE9FD}.fn{color:#50FA7B}.str{color:#F1FA8C}.cm{color:#6B8299;font-style:italic}.op{color:#BD93F9}.num{color:var(--amber)}.ky{color:#00BFFF}
+
+/* ── Features ── */
+#features{background:var(--bg2)}
+.feat-icon{font-size:2rem;margin-bottom:.85rem;display:block}
+.feat-card p{font-size:.88rem;margin:0;color:var(--muted)}
+
+/* ── Pipeline ── */
+.pipeline{display:flex;flex-wrap:wrap;gap:0;margin-top:2.5rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.pipe-step{flex:1;min-width:120px;padding:1.2rem 1rem;border-right:1px solid var(--border);position:relative;transition:background .2s}
+.pipe-step:last-child{border-right:none}
+.pipe-step:hover{background:var(--cyan-pale)}
+.pipe-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;color:var(--cyan);margin-bottom:.3rem;display:block}
+.pipe-name{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.2rem;display:block}
+.pipe-desc{font-size:.72rem;color:var(--muted);line-height:1.4}
+
+/* ── KPI Live Previews ── */
+#kpi-themes{background:var(--bg)}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem}
+@media(max-width:900px){.theme-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.theme-grid{grid-template-columns:1fr}}
+.theme-preview{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.theme-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .8rem;background:rgba(0,0,0,.03);border-bottom:1px solid var(--border);color:var(--muted)}
+
+/* KPI card variants */
+.kpi-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;padding:1rem}
+.kpi-card{padding:1rem 1.1rem;border-radius:10px}
+.kpi-label{display:block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;opacity:.7}
+.kpi-value{display:block;font-size:1.6rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1}
+
+/* flat */
+.theme-flat .kpi-card{background:#fff;border-top:3px solid #0077A8;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.theme-flat .kpi-label{color:#6b7280}.theme-flat .kpi-value{color:#0077A8}
+/* gradient */
+.theme-gradient .kpi-card{background:rgba(0,119,168,.09);border:1px solid rgba(0,119,168,.22)}
+.theme-gradient .kpi-label{color:#004d70}.theme-gradient .kpi-value{color:#0077A8}
+/* dark */
+.theme-dark{background:#0f172a}.theme-dark .kpi-cards{background:#0f172a}
+.theme-dark .kpi-card{background:#111827;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.theme-dark .kpi-label{color:#9ca3af}.theme-dark .kpi-value{color:#38bdf8}
+/* glass */
+.theme-glass{background:linear-gradient(135deg,#0077A8 0%,#003355 100%)}
+.theme-glass .kpi-cards{background:transparent}
+.theme-glass .kpi-card{background:rgba(255,255,255,.14);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.22)}
+.theme-glass .kpi-label{color:rgba(255,255,255,.7)}.theme-glass .kpi-value{color:#fff}
+/* minimal */
+.theme-minimal .kpi-card{background:transparent;border-bottom:2px solid rgba(0,119,168,.25);border-radius:0;padding-bottom:.8rem}
+.theme-minimal .kpi-label{color:#9ca3af}.theme-minimal .kpi-value{color:#111827;font-size:1.8rem}
+/* bold */
+.theme-bold .kpi-card{background:#0077A8;box-shadow:0 6px 18px rgba(0,119,168,.4)}
+.theme-bold .kpi-label{color:rgba(255,255,255,.75)}.theme-bold .kpi-value{color:#fff}
+
+/* ── Builder section ── */
+#builder{background:var(--bg2)}
+.builder-screen{background:#1e293b;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-lg);font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.builder-bar{background:#0f172a;padding:.7rem 1rem;display:flex;align-items:center;gap:.5rem}
+.dot{width:11px;height:11px;border-radius:50%}.dot.r{background:#FF5F57}.dot.y{background:#FFBD2E}.dot.g{background:#28CA42}
+.builder-bar-title{flex:1;text-align:center;font-size:.72rem;color:#64748b}
+.builder-body{display:grid;grid-template-columns:180px 1fr;height:380px}
+.builder-sidebar{background:#1C2333;border-right:1px solid rgba(255,255,255,.08);padding:.8rem 0}
+.builder-nav-item{padding:.55rem 1rem;font-size:.72rem;color:#64748b;display:flex;align-items:center;gap:.5rem;transition:all .2s;cursor:default}
+.builder-nav-item.active{color:#38bdf8;background:rgba(56,189,248,.1)}
+.builder-nav-item:hover{color:#94a3b8}
+.builder-content{padding:1.2rem;overflow-y:auto;display:flex;flex-direction:column;gap:.8rem}
+.builder-section-title{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.4rem}
+.builder-field{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.6rem .8rem;display:flex;align-items:center;justify-content:space-between}
+.builder-field-name{color:#94a3b8;font-size:.72rem}
+.builder-field-alias{color:#38bdf8;font-size:.72rem}
+.builder-field-badge{background:rgba(56,189,248,.12);color:#38bdf8;border-radius:4px;padding:.1rem .4rem;font-size:.62rem}
+.builder-pill{display:inline-flex;align-items:center;gap:.4rem;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:6px;padding:.25rem .6rem;font-size:.68rem;color:#c4b5fd}
+.builder-filter{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.5rem .8rem;display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:#94a3b8}
+.builder-filter span{color:#fbbf24}
+.preview-table{width:100%;border-collapse:collapse;font-size:.68rem}
+.preview-table th{background:rgba(255,255,255,.06);color:#64748b;padding:.4rem .6rem;text-align:left;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em}
+.preview-table td{padding:.4rem .6rem;color:#cbd5e1;border-bottom:1px solid rgba(255,255,255,.04)}
+.preview-table tr:last-child td{border-bottom:none}
+.preview-badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.62rem;font-weight:700}
+.badge-green{background:rgba(5,150,105,.2);color:#34d399}
+.badge-amber{background:rgba(196,106,0,.2);color:#fbbf24}
+.badge-red{background:rgba(220,38,38,.2);color:#f87171}
+
+/* ── Enterprise features ── */
+#enterprise{background:var(--bg2)}
+.ent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:2rem}
+@media(max-width:700px){.ent-grid{grid-template-columns:1fr}}
+.ent-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem;box-shadow:var(--shadow)}
+.ent-icon{font-size:1.8rem;margin-bottom:.75rem}
+.ent-card h3{font-size:1rem;margin-bottom:.5rem}
+.ent-card p{font-size:.84rem;color:var(--muted);margin-bottom:.8rem}
+.api-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.api-pill{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.2rem .6rem;border-radius:5px;font-weight:600}
+.pill-get{background:rgba(5,150,105,.1);color:var(--green)}
+.pill-post{background:rgba(0,119,168,.1);color:var(--cyan)}
+.pill-del{background:rgba(220,38,38,.1);color:var(--red)}
+
+/* ── Security visual ── */
+.security-layers{margin-top:1.5rem;display:flex;flex-direction:column;gap:.5rem}
+.sec-layer{display:flex;align-items:center;gap:.75rem;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.85rem}
+.sec-layer-num{width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;flex-shrink:0}
+.sec-layer-name{font-weight:700;width:180px;flex-shrink:0}
+.sec-layer-desc{color:var(--muted);font-size:.82rem}
+
+/* ── Performance ── */
+#perf{background:var(--bg)}
+.perf-bar-wrap{margin-bottom:.9rem}
+.perf-bar-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.35rem;color:var(--muted)}
+.perf-bar-track{height:7px;background:rgba(0,0,0,.06);border-radius:100px;overflow:hidden}
+.perf-bar-fill{height:100%;border-radius:100px;width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+.bar-bad{background:var(--red)}.bar-good{background:var(--green)}
+
+/* ── Metrics ── */
+#metrics{background:var(--bg2)}
+.metric-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.8rem 1.4rem;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.metric-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.metric-num{font-size:2.2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--cyan);display:block;line-height:1;margin-bottom:.3rem}
+.metric-unit{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.4rem}
+.metric-desc{font-size:.8rem;color:var(--muted);line-height:1.4}
+
+/* ── Install terminal ── */
+.terminal{background:#1C2333;border:1px solid rgba(0,100,160,.2);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-lg)}
+.terminal-header{background:#141C2B;padding:.65rem 1rem;display:flex;align-items:center;gap:.5rem}
+.terminal-title{flex:1;text-align:center;font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.terminal-body{padding:1.4rem 1.6rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:2}
+.t-cmd{color:var(--cyan)}.t-ok{color:var(--green)}.t-info{color:var(--amber)}.t-muted{color:var(--muted)}.t-prompt{color:var(--purple)}
+
+footer{text-align:center;padding:4rem 2rem;background:var(--bg2);border-top:1px solid var(--border);color:var(--muted);font-size:.85rem}
+footer strong{color:var(--cyan)}
+.footer-chips{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.2rem}
+.footer-chip{background:var(--white);border:1px solid var(--border);border-radius:100px;padding:.25rem .75rem;font-size:.73rem;font-weight:600}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">🤖 محرك التقارير بالـ AI</span>
+  <a href="#pipeline">المسار</a>
+  <a href="#query">كائن الاستعلام</a>
+  <a href="#parsers">المحلّلات</a>
+  <a href="#code">الكود</a>
+  <a href="#features">المميزات</a>
+  <a href="#install">التثبيت</a>
+  <a href="index.html" class="lang-btn">English 🌐</a>
+</nav>
+
+<!-- Hero -->
+<header>
+  <div class="hero-bg"></div>
+  <canvas id="particles" style="position:absolute;inset:0;pointer-events:none;z-index:0"></canvas>
+
+  <div class="hero-tag">📦 mostafax/ai-reporting-engine</div>
+
+  <h1>
+    <span class="g">محرك التقارير</span><br>
+    بالذكاء الاصطناعي
+  </h1>
+  <p class="hero-sub">
+    حوّل أي سؤال بلغة طبيعية إلى استعلام تقرير عبر مسار موحّد يجمع
+    Regex و OpenAI — مع تطبيع عربي، وتخزين مؤقت بالبصمة، وباني DSL قابل للاستبدال.
+    توكن أقل، وإعادة استخدام أعلى.
+  </p>
+
+  <div class="hero-chips">
+    <span class="chip">🧹 تطبيع النص</span>
+    <span class="chip">🔑 كاش بالبصمة</span>
+    <span class="chip">⚙️ محلّل Regex</span>
+    <span class="chip">🧠 محلّل OpenAI</span>
+    <span class="chip">🎯 كائن موحّد</span>
+    <span class="chip">🏗️ باني DSL مركزي</span>
+    <span class="chip">🍃 تخزين MongoDB</span>
+    <span class="chip">🔌 SOLID / DI</span>
+    <span class="chip">🌐 يدعم العربية</span>
+    <span class="chip">🧩 مُحلِّلات قابلة للاستبدال</span>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#install" class="btn-primary">ابدأ الآن ←</a>
+    <a href="#pipeline" class="btn-secondary">شاهد المسار</a>
+    <a href="index.html" class="btn-secondary">English</a>
+  </div>
+</header>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+<div class="container">
+  <div class="section-label">كيف يعمل</div>
+  <h2>مسار من 7 خطوات</h2>
+  <p>كل سؤال يمرّ بنفس المسار. المحرك يُنتج <strong>DSL فقط</strong> — والتنفيذ يُفوَّض إلى <code>dynamic-hybrid-reporting-engine</code>، المُغذّى ببيانات من <code>dual-layer-reporting-engine</code>.</p>
+
+  <div class="pipeline reveal">
+    <div class="pipe-step"><span class="pipe-num">01</span><span class="pipe-name">PromptNormalizer</span><div class="pipe-desc">تشذيب، حروف عربية، تشكيل وترقيم ← <code>بصمة</code></div></div>
+    <div class="pipe-step"><span class="pipe-num">02</span><span class="pipe-name">فحص الكاش</span><div class="pipe-desc">إصابة ← تحميل DSL مخزّن، تخطّي التحليل</div></div>
+    <div class="pipe-step"><span class="pipe-num">03</span><span class="pipe-name">RegexParser</span><div class="pipe-desc">مطابقة بلا توكن ← IntermediateQuery</div></div>
+    <div class="pipe-step"><span class="pipe-num">04</span><span class="pipe-name">OpenAiParser</span><div class="pipe-desc">عند فشل Regex ← JSON مُهيكل ← IntermediateQuery</div></div>
+    <div class="pipe-step"><span class="pipe-num">05</span><span class="pipe-name">DslBuilder</span><div class="pipe-desc">المكان الوحيد لبناء DSL — تحقّق ومطابقة</div></div>
+    <div class="pipe-step"><span class="pipe-num">06</span><span class="pipe-name">تخزين الكاش</span><div class="pipe-desc">حفظ النية + DSL (بلا صفوف)</div></div>
+    <div class="pipe-step"><span class="pipe-num">07</span><span class="pipe-name">ReportEngine.run</span><div class="pipe-desc">تنفيذ الـ DSL — محرك التقارير غير المتغيّر</div></div>
+  </div>
+</div>
+</section>
+
+<!-- QUERY OBJECT -->
+<section id="query" style="background:var(--bg2)">
+<div class="container">
+  <div class="section-label">كائن الاستعلام الموحّد</div>
+  <h2>شكل واحد — Regex أو AI، لا فرق للنظام</h2>
+  <p>كلا المحلّلين يُرجعان نفس <code>IntermediateQuery</code> تمامًا. المحلّل وحده يعرف مصدره؛ أما باني الـ DSL وبقية التطبيق فيبقيان غير مبالين بالمصدر.</p>
+
+  <div class="grid-2" style="margin-top:2rem">
+    <div class="card reveal">
+      <h3>⚙️ مخرجات RegexParser</h3>
+      <div class="code-block" style="margin-top:.8rem">{
+  <span class="ky">"module"</span>: <span class="str">"students"</span>,
+  <span class="ky">"operation"</span>: <span class="str">"list"</span>,
+  <span class="ky">"filters"</span>: [
+    { <span class="ky">"field"</span>:<span class="str">"class_id"</span>, <span class="ky">"operator"</span>:<span class="str">"="</span>, <span class="ky">"value"</span>:<span class="num">1</span> }
+  ],
+  <span class="ky">"projection"</span>: [<span class="str">"first_name_ar"</span>,<span class="str">"status"</span>],
+  <span class="ky">"limit"</span>: <span class="num">20</span>,
+  <span class="ky">"_source"</span>: <span class="str">"regex"</span>
+}</div>
+    </div>
+    <div class="card reveal">
+      <h3>🧠 مخرجات OpenAiParser</h3>
+      <div class="code-block" style="margin-top:.8rem">{
+  <span class="ky">"module"</span>: <span class="str">"books"</span>,
+  <span class="ky">"operation"</span>: <span class="str">"list"</span>,
+  <span class="ky">"filters"</span>: [
+    { <span class="ky">"field"</span>:<span class="str">"title_ar"</span>, <span class="ky">"operator"</span>:<span class="str">"like"</span>, <span class="ky">"value"</span>:<span class="str">"مقدمة"</span> }
+  ],
+  <span class="ky">"projection"</span>: [<span class="str">"title_ar"</span>,<span class="str">"author"</span>],
+  <span class="ky">"limit"</span>: <span class="num">20</span>,
+  <span class="ky">"_source"</span>: <span class="str">"openai"</span>
+}</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PARSERS -->
+<section id="parsers">
+<div class="container">
+  <div class="section-label">محرّكان، عقد واحد</div>
+  <h2>Regex أولًا، ثم OpenAI عند الفشل</h2>
+  <p>طريقة التحليل قابلة للتبديل: <code>auto</code> (regex ثم OpenAI)، <code>regex</code> (بلا توكن)، أو <code>openai</code>. كل عنصر خلف واجهة.</p>
+
+  <div class="grid-3" style="margin-top:2rem">
+    <div class="card feat-card reveal"><span class="feat-icon">⚙️</span><h3>RegexParser</h3><p>حتمي وبلا توكن. يطابق mappings ومفاهيم أعمدة قابلة للتعديل في MongoDB. يحوّل «طلاب الصف 1-A» إلى فلتر <code>class_id</code> عبر EntityResolver قابل للاستبدال.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🧠</span><h3>OpenAiParser</h3><p>يعمل فقط عند فشل Regex. يُرجع JSON صارمًا — لا DSL ولا SQL خام. يتتبّع زمن الاستجابة واستهلاك التوكن لسجل التنفيذ.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🔑</span><h3>كاش البصمة</h3><p>الأسئلة المتكافئة (مسافات، تشكيل، صور الألف) تشترك في بصمة واحدة، فيتخطّى السؤال المكرّر التحليل تمامًا بلا توكن.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- CODE -->
+<section id="code" style="background:var(--bg2)">
+<div class="container">
+  <div class="section-label">تجربة المطوّر</div>
+  <h2>أمثلة كود</h2>
+  <p>احقن المسار، احصل على DSL، سلّمه لمحرك التقارير.</p>
+
+  <div style="margin-top:2rem">
+    <div class="code-tabs">
+      <button class="tab-btn active" onclick="showTab('use',this)">استخدام المسار</button>
+      <button class="tab-btn" onclick="showTab('bind',this)">ربط مُحلِّل</button>
+      <button class="tab-btn" onclick="showTab('cfg',this)">الإعدادات</button>
+    </div>
+    <div class="code-panel active" id="tab-use">
+      <div class="code-block"><span class="kw">use</span> <span class="cls">Mostafax\AiReportingEngine\ReportQueryPipeline</span>;
+<span class="kw">use</span> <span class="cls">Mostafax\ReportingEngine\Core\Engine\ReportEngine</span>;
+
+<span class="kw">public function</span> <span class="fn">search</span>(<span class="cls">Request</span> $request, <span class="cls">ReportQueryPipeline</span> $pipeline, <span class="cls">ReportEngine</span> $engine)
+{
+    $result = $pipeline-><span class="fn">process</span>($request-><span class="fn">string</span>(<span class="str">'question'</span>));
+    <span class="cm">// ['source'=>'regex|openai|cache', 'collection'=>…, 'query'=>…, 'dsl'=>…, 'cached'=>bool]</span>
+
+    $rows = $engine-><span class="fn">run</span>($result[<span class="str">'dsl'</span>]);   <span class="cm">// نفّذ عبر محرك التقارير</span>
+
+    <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([<span class="str">'data'</span> => $rows->data, <span class="str">'source'</span> => $result[<span class="str">'source'</span>]]);
+}</div>
+    </div>
+    <div class="code-panel" id="tab-bind">
+      <div class="code-block"><span class="cm">// تفعيل تحويل اسم الصف → class_id (خاص بالمشروع)</span>
+$this-><span class="fn">app</span>-><span class="fn">bind</span>(
+    <span class="cls">EntityResolverInterface</span>::<span class="kw">class</span>,
+    <span class="cls">MyClassResolver</span>::<span class="kw">class</span>,
+);
+
+<span class="cm">// استبدال مصدر إعدادات الـ AI (مثلاً من قاعدة البيانات)</span>
+$this-><span class="fn">app</span>-><span class="fn">singleton</span>(
+    <span class="cls">AiConfigInterface</span>::<span class="kw">class</span>,
+    <span class="cls">SystemSettingAiConfig</span>::<span class="kw">class</span>,
+);</div>
+    </div>
+    <div class="code-panel" id="tab-cfg">
+      <div class="code-block"><span class="cm">// config/ai-reporting.php</span>
+<span class="kw">return</span> [
+    <span class="ky">'enabled'</span>      => <span class="kw">true</span>,
+    <span class="ky">'parse_method'</span> => <span class="str">'auto'</span>,   <span class="cm">// auto | regex | openai</span>
+    <span class="ky">'openai'</span> => [
+        <span class="ky">'api_key'</span>       => <span class="fn">env</span>(<span class="str">'OPENAI_API_KEY'</span>),
+        <span class="ky">'model'</span>         => <span class="str">'gpt-4o-mini'</span>,
+        <span class="ky">'schema_prompt'</span> => <span class="str">'…أقسامك وأعمدتك…'</span>,
+    ],
+    <span class="ky">'storage'</span> => [ <span class="ky">'connection'</span> => <span class="str">'mongodb'</span> ],
+];</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+<div class="container">
+  <div class="section-label">المميزات</div>
+  <h2>مبني لإعادة الاستخدام — لا شيء مثبّت بصلابة</h2>
+  <div class="grid-4" style="margin-top:2rem">
+    <div class="card feat-card reveal"><span class="feat-icon">🧹</span><h3>تطبيع عربي</h3><p>توحيد الألف والتاء المربوطة، وإزالة التشكيل والترقيم.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🔑</span><h3>كاش البصمة</h3><p>SHA-256 للنص المُطبَّع — صفر توكن عند التكرار.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🎯</span><h3>كائن موحّد</h3><p>Regex و AI يُرجعان نفس IntermediateQuery.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🏗️</span><h3>باني DSL مركزي</h3><p>المكان الوحيد الذي يُنتج DSL قابلًا للتنفيذ.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🔌</span><h3>SOLID + DI</h3><p>كل عنصر واجهة قابلة للاستبدال.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🍃</span><h3>تخزين MongoDB</h3><p>mappings ومفاهيم وكاش قابلة للتعديل.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">🧩</span><h3>مُحلِّل الكيانات</h3><p>تحويل الأسماء («الصف 1-A») إلى معرّفات للتصفية.</p></div>
+    <div class="card feat-card reveal"><span class="feat-icon">📊</span><h3>سجل التنفيذ</h3><p>المحلّل، إصابة الكاش، الزمن، التوكن، والـ DSL.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- INSTALL -->
+<section id="install" style="background:var(--bg2)">
+<div class="container">
+  <div class="section-label">التثبيت</div>
+  <h2>جاهز خلال دقائق</h2>
+  <p>حزمتا التقارير مطلوبتان إجباريًا وتُسحبان تلقائيًا.</p>
+  <div class="code-block reveal" style="margin-top:2rem">$ composer require mostafax/ai-reporting-engine
+$ php artisan vendor:publish --tag=ai-reporting-config</div>
+
+  <div class="grid-2" style="margin-top:1.5rem">
+    <div class="card reveal">
+      <h3>يتطلّب</h3>
+      <p style="margin-top:.6rem">
+        <code>mostafax/dynamic-hybrid-reporting-engine</code> — ينفّذ الـ DSL.<br>
+        <code>mostafax/dual-layer-reporting-engine</code> — يُكرّر البيانات للتقارير.
+      </p>
+    </div>
+    <div class="card reveal">
+      <h3>طريقة التحليل</h3>
+      <p style="margin-top:.6rem">
+        <code>auto</code> — regex أولًا، OpenAI عند الفشل (موصى به).<br>
+        <code>regex</code> — محلي فقط، بلا توكن.<br>
+        <code>openai</code> — AI فقط.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container" style="text-align:center;padding:3rem 0">
+    <div style="font-weight:900;font-size:1.1rem;margin-bottom:.5rem">🤖 محرك التقارير بالذكاء الاصطناعي</div>
+    <p style="margin-bottom:1rem">من اللغة الطبيعية إلى استعلام تقرير · Regex + OpenAI · MIT © Mostafa Elbayyar</p>
+    <div style="display:flex;gap:1.2rem;justify-content:center;font-size:.85rem;font-weight:600">
+      <a href="https://github.com/mostafax2/AI-Reporting-Engine">GitHub</a>
+      <a href="#pipeline">المسار</a>
+      <a href="#install">التثبيت</a>
+      <a href="index.html">English</a>
+    </div>
+  </div>
+</footer>
+<script>
+// Particles
+(function(){
+  const c=document.getElementById('particles');if(!c)return;
+  const ctx=c.getContext('2d');let W,H,pts=[];
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight}
+  resize();new ResizeObserver(resize).observe(c);
+  for(let i=0;i<55;i++) pts.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.4+.4,hue:Math.random()<.5?195:260,a:Math.random()*.35+.08});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`hsla(${p.hue},80%,45%,${p.a})`;ctx.fill()});
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,120,180,${(1-d/110)*.07})`;ctx.lineWidth=.5;ctx.stroke()}}
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Reveal on scroll
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// Counters
+const co=new IntersectionObserver(e=>e.forEach(x=>{
+  if(!x.isIntersecting)return;
+  const el=x.target,t=+el.dataset.target,s=+el.textContent,t0=performance.now();
+  function step(now){const p=Math.min((now-t0)/1600,1),ease=1-Math.pow(1-p,3);el.textContent=Math.round(s+(t-s)*ease);if(p<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step);co.unobserve(el);
+}),{threshold:.5});
+document.querySelectorAll('.metric-num[data-target]').forEach(el=>co.observe(el));
+
+// Perf bars
+const bo=new IntersectionObserver(e=>e.forEach(x=>{
+  if(!x.isIntersecting)return;
+  x.target.querySelectorAll('.perf-bar-fill[data-w]').forEach(b=>setTimeout(()=>b.style.width=b.dataset.w+'%',200));
+  bo.unobserve(x.target);
+}),{threshold:.3});
+document.querySelectorAll('.reveal').forEach(el=>bo.observe(el));
+
+// Tabs
+function showTab(id,btn){
+  const panel=document.getElementById('tab-'+id);
+  if(!panel)return;
+  const parent=panel.closest('section,div');
+  parent.querySelectorAll('.code-panel').forEach(p=>p.classList.remove('active'));
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  panel.classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 Turn natural-language prompts into report queries via a unified **Regex + OpenAI** pipeline, with prompt normalization, fingerprint caching, and a pluggable DSL builder.
 
+📖 **[Documentation](https://mostafax2.github.io/AI-Reporting-Engine/)** · [العربية](https://mostafax2.github.io/AI-Reporting-Engine/ar.html)
+
 The engine produces a **DSL only** — execution is delegated to
 [`mostafax/dynamic-hybrid-reporting-engine`](https://packagist.org/packages/mostafax/dynamic-hybrid-reporting-engine),
 fed by data replicated through
